@@ -149,7 +149,13 @@ class ConversableAgent(LLMAgent):
         else:
             self._oai_messages = chat_messages
 
-        self._oai_system_message = [{"content": system_message, "role": "system"}]
+        role = "system"
+        if isinstance(llm_config, dict):
+            model_name = llm_config["config_list"][0]["model"]
+            if model_name == "o1-preview": 
+                role = "user"
+            self._oai_system_message = [{"content": system_message, "role": role}]
+
         self._description = description if description is not None else system_message
         self._is_termination_msg = (
             is_termination_msg
